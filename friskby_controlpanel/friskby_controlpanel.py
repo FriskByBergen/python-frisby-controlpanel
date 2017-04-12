@@ -91,8 +91,6 @@ def dashboard():
         return redirect(url_for('register'))
 
     sockname = fby_iface.get_socket_iface_address()
-    if not sockname:
-        sockname = 'Unable to obtain socket name.'
     return render_template(
         'dashboard.html',
         has_sampled=fby_iface.get_all_samples_count() > 0,
