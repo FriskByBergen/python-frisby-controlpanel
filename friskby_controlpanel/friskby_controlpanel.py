@@ -201,3 +201,9 @@ def status_manage(service_name, action_name):
 
     flash('Requested %s on service %s.' % (action_name, service_name))
     return redirect(url_for('status', service_name=service_name))
+
+
+@app.route('/settings', methods=['GET', 'POST'])
+def settings():
+    """Manages a service."""
+    iface = app.config['FRISKBY_INTERFACE']
