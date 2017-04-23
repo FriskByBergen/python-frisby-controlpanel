@@ -242,3 +242,7 @@ td.recent_sample_nonuploaded {
 .form-errors {
     color: red;
 }
+
+.settings-url {
+    color: #0077E5
+}
