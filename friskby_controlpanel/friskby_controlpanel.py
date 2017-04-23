@@ -36,7 +36,8 @@ app.config.update(dict(
     FRISKBY_ROOT_URL='https://friskby.herokuapp.com',
     FRISKBY_SENSOR_PATH='/sensor/api/device',
     FRISKBY_DEVICE_CONFIG_PATH='/usr/local/friskby/etc/config.json',
-    FRISKBY_INTERFACE=FriskbyInterface
+    FRISKBY_INTERFACE=FriskbyInterface,
+    WTF_CSRF_ENABLED=False
 ))
 app.config.from_envvar('FRISKBY_CONTROLPANEL_SETTINGS', silent=True)
 app.secret_key = 'we actually do not care too much'
