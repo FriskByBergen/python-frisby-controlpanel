@@ -35,9 +35,31 @@ class SettingsTestCase(unittest.TestCase):
 
         self.app = cp.app.test_client()
 
-    def test_manage_known_service(self):
+    def test_looking_at_settings(self):
         out = self.app.get('/settings')
-        print(out.data)
+        self.assertIn('rpi_sample_time', out.data)
+        self.assertIn('rpi_control_panel_host', out.data)
+        self.assertIn('rpi_control_panel_port', out.data)
+        self.assertIn('rpi_sds011', out.data)
+
+    def test_changing_a_setting_successfully(self):
+        out = self.app.post('/settings', data={
+            'rpi_sample_time': 12,
+            'rpi_control_panel_host': '0.0.0.0',
+            'rpi_control_panel_port': 50,
+            'rpi_sds011': '/dev/foo'
+        })
+        self.assertIn('Settings saved.', out.data)
+        self.assertEqual(12, self.iface.settings['rpi_sample_time'])
+
+    def test_posting_form_with_bad_data(self):
+        out = self.app.post('/settings', data={
+            'rpi_control_panel_host': '0.0.0.0',
+            'rpi_control_panel_port': 50,
+            'rpi_sds011': '/dev/foo'
+        })
+        self.assertIn('Form had errors', out.data)
+        self.assertIn('This field is required', out.data)
 
 
 if __name__ == '__main__':

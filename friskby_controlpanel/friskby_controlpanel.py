@@ -27,6 +27,7 @@ import inspect
 from . import ctljson
 from flask import (Flask, request, redirect, flash, url_for, render_template)  # noqa
 from .friskby_interface import FriskbyInterface
+from .forms import SettingsForm
 
 app = Flask(__name__)
 app.config.from_object(__name__)
@@ -205,5 +206,20 @@ def status_manage(service_name, action_name):
 
 @app.route('/settings', methods=['GET', 'POST'])
 def settings():
-    """Manages a service."""
+    """Displays and allows changing of settings."""
     iface = app.config['FRISKBY_INTERFACE']
+    form = None
+
+    if request.method == 'GET':
+        form = SettingsForm(data=iface.get_settings())
+    else:
+        form = SettingsForm()  # defaults to flask.request.form
+        if form.validate_on_submit():
+            flash('Settings saved.')
+            iface.set_settings(form.data)
+        else:
+            flash('Form had errors.')
+
+    return render_template(
+        'settings.html', form=form, errors=form.errors
+    )
