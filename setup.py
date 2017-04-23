@@ -30,7 +30,12 @@ setup(
 
     # Note that we require that dbus-python is installed on the system, but if
     # we require it here, this package becomes architecture dependent.
-    install_requires=['friskby', 'flask', 'rpiparticle', 'Flask-WTF'],
+    install_requires=[
+        'friskby>=0.72.1',
+        'flask',
+        'rpiparticle>=0.9.2',
+        'Flask-WTF',
+    ],
     test_suite='tests',
     tests_require=['pylint']
 )
