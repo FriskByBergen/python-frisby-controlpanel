@@ -18,7 +18,7 @@
     <header>
         <div class="header-meat">
             <div class="logo">
-                <a href="{{ url_for('dashboard') }}">
+                <a href="{{ friskby_home }}">
                     <img src="{{ url_for('static', filename='img/friskby-logo.png') }}">
                 </a>
             </div>
@@ -29,7 +29,7 @@
             <p class="device-id">
             Device:
             {% if device_id %}
-                <b>{{ device_id }}</b>
+                <b><a href="{{ url_for('dashboard') }}"> {{ device_id }} </a> </b>
             {% else %}
                 Not registered
             {% endif %}
