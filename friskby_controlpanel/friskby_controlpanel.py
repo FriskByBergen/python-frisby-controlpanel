@@ -33,6 +33,7 @@ app = Flask(__name__)
 app.config.from_object(__name__)
 
 app.config.update(dict(
+    FRISKBY_HOME_URL='https://friskby.no',
     FRISKBY_ROOT_URL='https://friskby.herokuapp.com',
     FRISKBY_SENSOR_PATH='/sensor/api/device',
     FRISKBY_DEVICE_CONFIG_PATH='/usr/local/friskby/etc/config.json',
@@ -100,6 +101,7 @@ def dashboard():
     sockname = fby_iface.get_socket_iface_name()
     return render_template(
         'dashboard.html',
+        friskby_home=app.config["FRISKBY_HOME_URL"],
         has_sampled=fby_iface.get_all_samples_count() > 0,
         has_uploaded=fby_iface.get_uploaded_samples_count() > 0,
         most_recent_sample=fby_iface.get_most_recently_sampled(),
@@ -141,13 +143,13 @@ def register():
                 print(error)
                 sys.stdout.flush()
 
-    return render_template('register.html', error=error)
+    return render_template('register.html', error=error, friskby_home=app.config["FRISKBY_HOME_URL"])
 
 
 @app.route('/registered')
 def registered():
     """Renders a “your device is registered template”."""
-    return render_template('registered.html')
+    return render_template('registered.html',friskby_home=app.config["FRISKBY_HOME_URL"])
 
 
 @app.route('/service/<string:service_name>')
@@ -178,6 +180,7 @@ def status(service_name):
 
     return render_template(
         'service.html',
+        friskby_home=app.config["FRISKBY_HOME_URL"],
         error=error,
         name=service_name,
         status=service_status,
@@ -222,5 +225,5 @@ def settings():
             flash('Form had errors.')
 
     return render_template(
-        'settings.html', form=form, errors=form.errors
+        'settings.html', form=form, errors=form.errors, friskby_home=app.config["FRISKBY_HOME_URL"]
     )
