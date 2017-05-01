@@ -246,3 +246,22 @@ td.recent_sample_nonuploaded {
 .settings-url {
     color: #0077E5
 }
+
+.map {
+    height: 300px;
+    width: 100%;
+    background: url(map-background.jpg) repeat;
+    margin-bottom: 10px;
+}
+
+#rpi_location {
+    display: none;
+}
+
+.location-information {
+    font-size: 9pt;
+}
+
+.location-information span {
+    font-weight: bold;
+}
