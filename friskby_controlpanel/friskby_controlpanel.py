@@ -212,7 +212,9 @@ def settings():
     form = None
 
     if request.method == 'GET':
-        form = SettingsForm(data=iface.get_settings())
+        data = iface.get_settings()
+        data['rpi_location'] = iface.get_location()
+        form = SettingsForm(data=data)
     else:
         form = SettingsForm()  # defaults to flask.request.form
         if form.validate_on_submit():
