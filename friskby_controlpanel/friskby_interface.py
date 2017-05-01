@@ -224,3 +224,10 @@ class FriskbyInterface():
                                  settings['rpi_control_panel_port'])
         fby_settings.set_setting('rpi_sds011',
                                  settings['rpi_sds011'])
+
+    def get_location(self):
+        # Returns a tuple of (lat, lon, altitude, name).
+        return (60.41, 5.22, 0, "øk")
+
+    def set_location(lat, lon, altitude, name):
+        pass
