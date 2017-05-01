@@ -41,13 +41,15 @@ class SettingsTestCase(unittest.TestCase):
         self.assertIn('rpi_control_panel_host', out.data)
         self.assertIn('rpi_control_panel_port', out.data)
         self.assertIn('rpi_sds011', out.data)
+        self.assertIn('rpi_location', out.data)
 
     def test_changing_a_setting_successfully(self):
         out = self.app.post('/settings', data={
             'rpi_sample_time': 12,
             'rpi_control_panel_host': '0.0.0.0',
             'rpi_control_panel_port': 50,
-            'rpi_sds011': '/dev/foo'
+            'rpi_sds011': '/dev/foo',
+            'rpi_location': '5.0, 60, 0, Bergen E Fin'
         })
         self.assertIn('Settings saved.', out.data)
         self.assertEqual(12, self.iface.settings['rpi_sample_time'])
@@ -56,10 +58,42 @@ class SettingsTestCase(unittest.TestCase):
         out = self.app.post('/settings', data={
             'rpi_control_panel_host': '0.0.0.0',
             'rpi_control_panel_port': 50,
-            'rpi_sds011': '/dev/foo'
+            'rpi_sds011': '/dev/foo',
+            'rpi_location': '5.0, 60, 0, Bergen E Fin',
         })
         self.assertIn('Form had errors', out.data)
         self.assertIn('This field is required', out.data)
+
+    def test_bad_location(self):
+        data = {
+            'rpi_sample_time': 12,
+            'rpi_control_panel_host': '0.0.0.0',
+            'rpi_control_panel_port': 50,
+            'rpi_sds011': '/dev/foo',
+        }
+        data['rpi_location'] = '-91, 60, 0, Bergen E Fin'
+        out = self.app.post('/settings', data=data)
+        self.assertIn('Form had errors', out.data)
+        self.assertIn('Latitude must be a number between -90 and 90.',
+                      out.data)
+
+        data['rpi_location'] = '5, -181, 0, Bergen E Fin'
+        out = self.app.post('/settings', data=data)
+        self.assertIn('Form had errors', out.data)
+        self.assertIn('Longitude must be a number between -180 and 180.',
+                      out.data)
+
+        data['rpi_location'] = '5, 60, x, Bergen E Fin'
+        out = self.app.post('/settings', data=data)
+        self.assertIn('Form had errors', out.data)
+        self.assertIn('Altitude must be a number, or 0 if not known.',
+                      out.data)
+
+        data['rpi_location'] = '5, 60, 0, '
+        out = self.app.post('/settings', data=data)
+        self.assertIn('Form had errors', out.data)
+        self.assertIn('A location needs a human readable name.',
+                      out.data)
 
 
 if __name__ == '__main__':
