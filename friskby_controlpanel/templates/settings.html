@@ -124,11 +124,11 @@
         })
     });
 
-    map.on("click", function(e) {
+    map.on('click', function(e) {
         var lonLat = ol.proj.transform(e.coordinate, 'EPSG:3857', 'EPSG:4326');
         marker.setGeometry(new ol.geom.Point(ol.proj.fromLonLat(lonLat)));
 
-        var name = window.prompt("Give the location a friendly name");
+        var name = window.prompt('Give the location a friendly name');
         if (name) {
             updateLocation(lonLat[0], lonLat[1], 0, name);
         }
@@ -137,19 +137,19 @@
 
     function updateLocation(lon, lat, alt, name) {
         var locInput = document.getElementById('rpi_location');
-        locInput.value = lon + ", " + lat + ", " + alt + ", " + name;
+        locInput.value = lon + ', ' + lat + ', ' + alt + ', ' + name;
         printLocation();
     }
 
 
     function printLocation() {
         var locInput = document.getElementById('rpi_location');
-        var locInputArr = locInput.value.split(", ");
-        var info = document.getElementsByClassName("location-information")[0];
-        info.innerHTML = "<span>Latitude</span>: " + locInputArr[0];
-        info.innerHTML += " · <span>Longitude</span>: " + locInputArr[1];
-        info.innerHTML += " · <span>Elevation</span>: " + locInputArr[2];
-        info.innerHTML += " · <span>Name</span>: " + locInputArr[3];
+        var locInputArr = locInput.value.split(', ');
+        var info = document.getElementsByClassName('location-information')[0];
+        info.innerHTML = '<span>Latitude</span>: ' + locInputArr[0];
+        info.innerHTML += ' · <span>Longitude</span>: ' + locInputArr[1];
+        info.innerHTML += ' · <span>Elevation</span>: ' + locInputArr[2];
+        info.innerHTML += ' · <span>Name</span>: ' + locInputArr[3];
     }
 
     printLocation();
