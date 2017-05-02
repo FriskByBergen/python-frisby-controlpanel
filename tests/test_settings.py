@@ -49,7 +49,7 @@ class SettingsTestCase(unittest.TestCase):
             'rpi_control_panel_host': '0.0.0.0',
             'rpi_control_panel_port': 50,
             'rpi_sds011': '/dev/foo',
-            'rpi_location': '5.0, 60, 0, Bergen E Fin'
+            'rpi_location': '5.0, 60, 0, Bergen E Fin',
         })
         self.assertIn('Settings saved.', out.data)
         self.assertEqual(12, self.iface.settings['rpi_sample_time'])
