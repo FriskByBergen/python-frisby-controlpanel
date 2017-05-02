@@ -12,7 +12,7 @@ def is_number(s):
         return False
 
 
-def validate_lat_lon_alt_name(form, field):
+def validate_lat_lon_alt_name(_, field):
     lat, lon, altitude, name = field.data
     if not is_number(lat) or float(lat) < -90 or float(lat) > 90:
         raise ValidationError(
@@ -34,10 +34,11 @@ class LocationField(Field):
     # A comma separated list of lat, lon, altitude, name.
     widget = TextInput()
 
-    def __init__(self, label='',
-                 validators=[InputRequired(),
-                             validate_lat_lon_alt_name], **kwargs):
-        super(LocationField, self).__init__(label, validators, **kwargs)
+    def __init__(self, label='', validators=None, **kwargs):
+        super(LocationField, self).__init__(
+            label, [InputRequired(), validate_lat_lon_alt_name], **kwargs
+        )
+        self.data = None
 
     def _value(self):
         if self.data:
@@ -48,6 +49,8 @@ class LocationField(Field):
                 alt = float(alt)
             except ValueError:
                 return u''
+            # Note the loss of precision here. The default precision for %f is
+            # 6, but that is enough precision (110cm).
             return u'%f, %f, %f, %s' % (float(lat), float(lon), float(alt),
                                         name)
         else:

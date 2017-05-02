@@ -32,6 +32,7 @@ class FakeFriskbyInterface():
     def __init__(self):
         self.fails = False
         self.device_id = None
+        self.api_key = None
 
         self.uploaded_samples_count = 0
         self.all_samples_count = 0
@@ -58,8 +59,8 @@ class FakeFriskbyInterface():
                 url, filename
             ))
 
-    def get_device_id(self, _):
-        return self.device_id
+    def get_device_id_and_api_key(self, _):
+        return (self.device_id, self.api_key)
 
     def get_service_status(self, service):
         if service == 'sampler':

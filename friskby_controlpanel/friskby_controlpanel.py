@@ -55,8 +55,9 @@ def before_request():
 def inject_device_id():
     """Injects the device_id into the template context, or None if none."""
     filename = app.config['FRISKBY_DEVICE_CONFIG_PATH']
+    iface = app.config['FRISKBY_INTERFACE']
     try:
-        device_id = app.config['FRISKBY_INTERFACE'].get_device_id(filename)
+        (device_id, _) = iface.get_device_id_and_api_key(filename)
     except IOError:
         device_id = None
     return dict(device_id=device_id)
@@ -89,7 +90,7 @@ def dashboard():
     config_path = app.config['FRISKBY_DEVICE_CONFIG_PATH']
 
     try:
-        device_id = fby_iface.get_device_id(config_path)
+        (device_id, _) = fby_iface.get_device_id_and_api_key(config_path)
     except IOError:
         device_id = None
 
@@ -116,7 +117,7 @@ def register():
     error = None
 
     try:
-        device_id = fby_iface.get_device_id(config_path)
+        (device_id, _) = fby_iface.get_device_id_and_api_key(config_path)
     except IOError:
         device_id = None
 

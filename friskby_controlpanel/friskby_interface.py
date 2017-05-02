@@ -163,13 +163,17 @@ class FriskbyInterface():
         lines.reverse()
         return lines
 
-    def get_device_id(self, filename):
-        """Returns the device id, or None."""
-        config = DeviceConfig(filename)
+    def get_device_id_and_api_key(self, config_file):
+        # Returns a tuple consisting of device ID and API key.
+        config = DeviceConfig(config_file)
         device_id = config.getDeviceID()
+        post_key = config.getPostKey()
         if device_id == "" or device_id is None:
-            return None
-        return device_id
+            device_id = None
+        if post_key == "" or post_key is None:
+            post_key = None
+
+        return (device_id, post_key)
 
     def get_uploaded_samples_count(self):
         fetch_uploaded = True
@@ -229,5 +233,5 @@ class FriskbyInterface():
         # Returns a tuple of (lat, lon, altitude, name).
         return (60.41, 5.22, 0, "øk")
 
-    def set_location(lat, lon, altitude, name):
+    def set_location(self, lat, lon, altitude, name):
         pass

@@ -71,24 +71,29 @@ class SettingsTestCase(unittest.TestCase):
             'rpi_control_panel_port': 50,
             'rpi_sds011': '/dev/foo',
         }
+
+        # Bad latitude.
         data['rpi_location'] = '-91, 60, 0, Bergen E Fin'
         out = self.app.post('/settings', data=data)
         self.assertIn('Form had errors', out.data)
         self.assertIn('Latitude must be a number between -90 and 90.',
                       out.data)
 
+        # Bad longitude.
         data['rpi_location'] = '5, -181, 0, Bergen E Fin'
         out = self.app.post('/settings', data=data)
         self.assertIn('Form had errors', out.data)
         self.assertIn('Longitude must be a number between -180 and 180.',
                       out.data)
 
+        # Bad altitude.
         data['rpi_location'] = '5, 60, x, Bergen E Fin'
         out = self.app.post('/settings', data=data)
         self.assertIn('Form had errors', out.data)
         self.assertIn('Altitude must be a number, or 0 if not known.',
                       out.data)
 
+        # Bad name.
         data['rpi_location'] = '5, 60, 0, '
         out = self.app.post('/settings', data=data)
         self.assertIn('Form had errors', out.data)
