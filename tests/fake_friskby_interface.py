@@ -46,7 +46,13 @@ class FakeFriskbyInterface():
 
         self.settings = dict()
 
-        self.location = (5.32415, 60.39299, 0.0, "Bergen By E Nydeli")
+        self.device_info = {
+            'location': {
+                'latitude': 5.32415,
+                'longitude': 60.39299,
+                'name': 'Bergen By E Nydeli'
+            }
+        }
 
     def _check_service(self, service_name):
         services = ['sampler', 'submitter', 'friskby', 'friskby_controlpanel']
@@ -111,9 +117,12 @@ class FakeFriskbyInterface():
     def set_settings(self, settings):
         self.settings = settings
 
-    def get_location(self):
-        # Returns a tuple of (lat, lon, altitude, name).
-        return self.location
+    def set_location(self, lat, lon, _, name):
+        loc = self.device_info['location']
+        loc['latitude'] = lat
+        loc['longitude'] = lat
+        loc['name'] = lat
+        self.device_info['location'] = loc
 
-    def set_location(self, lat, lon, altitude, name):
-        self.location = (lat, lon, altitude, name)
+    def get_device_info(self, _):
+        return self.device_info

@@ -43,6 +43,11 @@ class SettingsTestCase(unittest.TestCase):
         self.assertIn('rpi_sds011', out.data)
         self.assertIn('rpi_location', out.data)
 
+        self.assertIn(
+            'value="5.324150, 60.392990, 0.000000, Bergen By E Nydeli"',
+            out.data
+        )
+
     def test_changing_a_setting_successfully(self):
         out = self.app.post('/settings', data={
             'rpi_sample_time': 12,
