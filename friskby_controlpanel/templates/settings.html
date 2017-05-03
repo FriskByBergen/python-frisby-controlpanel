@@ -61,21 +61,25 @@
             {% endif %}
         </div>
 
-        <div class="pure-control-group rpi_location-group">
-            <label for="rpi_location">Location</label>
-            <span class="pure-form-message">Select a new location for this device by clicking on the map.</span>
-            {{form.rpi_location}}
-            {% if errors.rpi_location %}
-                <ul class="form-errors">
-                {% for e in errors.rpi_location %}
-                    <li>{{ e }}</li>
-                {% endfor %}
-                </ul>
-            {% endif %}
+        <div id="rpi_location_container">
+            <div class="pure-control-group rpi_location-group">
+                <label for="rpi_location">Location</label>
+                <span class="pure-form-message">Select a new location for this device by clicking on the map.</span>
+                {{form.rpi_location}}
+                {% if errors.rpi_location %}
+                    <ul class="form-errors">
+                    {% for e in errors.rpi_location %}
+                        <li>{{ e }}</li>
+                    {% endfor %}
+                    </ul>
+                {% endif %}
+            </div>
+
+            <div id="map" class="map"></div>
+            <p class="location-information"></p>
+            <p class="location-unavailable">Could not get the location of your device from Friskby. Please check your Internet connection, or create an issue on the <a href="{{ support_url }}">project home page</a>. </p>
         </div>
 
-        <div id="map" class="map"></div>
-        <p class="location-information"></p>
 
         <button type="submit" class="pure-button pure-button-primary">Save</button>
     </fieldset>
@@ -84,7 +88,18 @@
 <script>
     var locInput = document.getElementById('rpi_location');
     var locInputArr = locInput.value.split(", ");
-    var lonLat = [parseFloat(locInputArr[0], 10), parseFloat(locInputArr[1])];
+    var lonLat = [parseFloat(locInputArr[1], 10), parseFloat(locInputArr[0])];
+
+    if (isNaN(lonLat[0]) || isNaN(lonLat[1])) {
+        document.getElementById('rpi_location_container').classList.add('unavailable');
+
+        // We don't know what the lon/lat is, show Bergen.
+        lonLat[0] = 5.324383;
+        lonLat[1] = 60.397076;
+    } else {
+        printLocation();
+    }
+
     var marker = new ol.Feature({
         geometry: new ol.geom.Point(ol.proj.fromLonLat(lonLat))
     });
@@ -151,8 +166,6 @@
         info.innerHTML += ' · <span>Elevation</span>: ' + locInputArr[2];
         info.innerHTML += ' · <span>Name</span>: ' + locInputArr[3];
     }
-
-    printLocation();
 </script>
 
 {% endblock %}
