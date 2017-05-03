@@ -217,11 +217,31 @@ def status_manage(service_name, action_name):
 def settings():
     """Displays and allows changing of settings."""
     iface = app.config['FRISKBY_INTERFACE']
+
+    config_path = app.config['FRISKBY_DEVICE_CONFIG_PATH']
+    device_id = None
+    try:
+        (device_id, _) = iface.get_device_id_and_api_key(config_path)
+    except IOError:
+        pass
+
+    device_info_uri = "%s/%s/%s" % (app.config['FRISKBY_ROOT_URL'],
+                                    app.config['FRISKBY_SENSOR_PATH'],
+                                    device_id)
+    device_info = iface.get_device_info(device_info_uri)
+    location = None
+    try:
+        loc = device_info['location']
+        location = (loc['latitude'], loc['longitude'], 0, loc['name'])
+    except TypeError:
+        print("Failed to get location of device from friskby.")
+        sys.stdout.flush()
+
     form = None
 
     if request.method == 'GET':
         data = iface.get_settings()
-        data['rpi_location'] = iface.get_location()
+        data['rpi_location'] = location
         form = SettingsForm(data=data)
     else:
         form = SettingsForm()  # defaults to flask.request.form

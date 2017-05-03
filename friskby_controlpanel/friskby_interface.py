@@ -28,6 +28,7 @@ except ImportError:
 
 import socket
 import json
+import requests
 import subprocess
 import sys
 from friskby import DeviceConfig, FriskbyDao
@@ -86,6 +87,9 @@ class FriskbyInterface():
     def __init__(self):
         self.systemd = SystemdDBus()
         self.dao = FriskbyDao(fby_settings.get_setting("rpi_db"))
+
+        # Dict from e.g. http://friskby.herokuapp.com/sensor/api/device/foo
+        self._device_info = None
 
     def _service_to_unit(self, service):
         """Returns a unit or None if the service wasn't pertinent to the
@@ -233,9 +237,17 @@ class FriskbyInterface():
         fby_settings.set_setting('rpi_sds011',
                                  settings['rpi_sds011'])
 
-    def get_location(self):
-        # Returns a tuple of (lat, lon, altitude, name).
-        return (60.41, 5.22, 0, "øk")
-
     def set_location(self, lat, lon, altitude, name):
         pass
+
+    def get_device_info(self, uri):
+        r = None
+        try:
+            r = requests.get(uri)
+        except requests.exceptions.ConnectionError:
+            return None
+
+        if r.status_code != 200:
+            return None
+
+        return r.json()
