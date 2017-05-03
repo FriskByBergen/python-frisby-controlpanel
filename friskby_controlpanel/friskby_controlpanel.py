@@ -39,7 +39,8 @@ app.config.update(dict(
     FRISKBY_DEVICE_CONFIG_PATH=DEVICE_CONFIG_PATH,
     FRISKBY_INTERFACE=FriskbyInterface,
     CONFIG_URL=config_url,
-    WTF_CSRF_ENABLED=False
+    WTF_CSRF_ENABLED=False,
+    SUPPORT_URL='https://github.com/FriskByBergen/python-friskby-controlpanel'
 ))
 app.config.from_envvar('FRISKBY_CONTROLPANEL_SETTINGS', silent=True)
 app.secret_key = 'we actually do not care too much'
@@ -63,6 +64,13 @@ def inject_device_id():
     except IOError:
         device_id = None
     return dict(device_id=device_id)
+
+
+@app.context_processor
+def inject_meta():
+    # Injects meta stuff (about the controlpanel) into the context.
+    support_url = app.config['SUPPORT_URL']
+    return dict(support_url=support_url)
 
 
 @app.context_processor
