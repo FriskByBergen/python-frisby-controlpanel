@@ -152,7 +152,7 @@
 
     function updateLocation(lon, lat, alt, name) {
         var locInput = document.getElementById('rpi_location');
-        locInput.value = lon + ', ' + lat + ', ' + alt + ', ' + name;
+        locInput.value = lat + ', ' + lon + ', ' + alt + ', ' + name;
         printLocation();
     }
 

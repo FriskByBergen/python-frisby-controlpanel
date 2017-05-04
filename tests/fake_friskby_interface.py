@@ -48,8 +48,8 @@ class FakeFriskbyInterface():
 
         self.device_info = {
             'location': {
-                'latitude': 5.32415,
-                'longitude': 60.39299,
+                'latitude': 60.39299,
+                'longitude': 5.32415,
                 'name': 'Bergen By E Nydeli'
             }
         }
