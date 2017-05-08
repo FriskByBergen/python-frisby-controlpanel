@@ -33,6 +33,7 @@ import subprocess
 import sys
 from friskby import DeviceConfig, FriskbyDao
 from rpiparticle import fby_settings
+from .friskby_settings import DEVICE_CONFIG_PATH, config_url
 
 
 SYSTEMD_NAME = 'org.freedesktop.systemd1'
@@ -237,8 +238,29 @@ class FriskbyInterface():
         fby_settings.set_setting('rpi_sds011',
                                  settings['rpi_sds011'])
 
-    def set_location(self, lat, lon, altitude, name):
-        pass
+    def set_location(self, lat, lon, altitude, name, uri, api_key):
+        r = None
+        try:
+            print('Attempting to set location using api key %s and device id %s.' % (api_key, uri))
+            sys.stdout.flush()
+
+            r = requests.post(uri, data={
+                'key': api_key,
+                'latitude': lat,
+                'longitude': lon,
+                'altitude': altitude,
+                'name': name
+            })
+        except requests.exceptions.ConnectionError as e:
+            raise RuntimeError('Failed to set location: %s' % e)
+
+        if r is not None and r.status_code != 302:
+            print('Failed to set location: %s:' % r.text)
+            sys.stdout.flush()
+            raise RuntimeError(
+                'Failed to set location, friskby responded with %d.'
+                % r.status_code
+            )
 
     def get_device_info(self, uri):
         r = None
