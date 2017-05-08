@@ -217,14 +217,20 @@ def status_manage(service_name, action_name):
 def settings():
     """Displays and allows changing of settings."""
     iface = app.config['FRISKBY_INTERFACE']
-
     config_path = app.config['FRISKBY_DEVICE_CONFIG_PATH']
     device_id = None
+    api_key = None
     try:
-        (device_id, _) = iface.get_device_id_and_api_key(config_path)
+        (device_id, api_key) = iface.get_device_id_and_api_key(config_path)
     except IOError:
         pass
 
+    # No device, so redirect to the register page.
+    if not device_id:
+        flash('Please register your device before tuning settings.')
+        return redirect(url_for('register'))
+
+    # Get location from friskby.
     device_info_uri = "%s/%s/%s" % (app.config['FRISKBY_ROOT_URL'],
                                     app.config['FRISKBY_SENSOR_PATH'],
                                     device_id)
@@ -248,9 +254,32 @@ def settings():
         if form.validate_on_submit():
             flash('Settings saved.')
             iface.set_settings(form.data)
+
+            # Attempts to set the location only if it has changed.
+            if not _compare_locations(location,
+                                      form.rpi_location.get_location()):
+                try:
+                    field = form.rpi_location
+                    api_uri = "%s/%s/%s/" % (
+                        app.config['FRISKBY_ROOT_URL'],
+                        'sensor/api/location/create',
+                        device_id
+                    )
+                    iface.set_location(
+                        field.get_latitude(), field.get_longitude(),
+                        field.get_altitude(), field.get_name(), api_uri,
+                        api_key)
+                except RuntimeError as e:
+                    flash('Setting the location failed: %s' % e)
+
         else:
             flash('Form had errors.')
 
     return render_template(
         'settings.html', form=form, errors=form.errors
     )
+
+
+def _compare_locations(a, b):
+    # Returns true if strictly equal. Name is ignored.
+    return a[0] == b[0] and a[1] == b[1] and a[2] == b[2]
