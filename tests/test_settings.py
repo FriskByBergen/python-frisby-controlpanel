@@ -44,7 +44,7 @@ class SettingsTestCase(unittest.TestCase):
         self.assertIn('rpi_location', out.data)
 
         self.assertIn(
-            'value="5.324150, 60.392990, 0.000000, Bergen By E Nydeli"',
+            'value="60.392990, 5.324150, 0.000000, Bergen By E Nydeli"',
             out.data
         )
 
@@ -104,6 +104,56 @@ class SettingsTestCase(unittest.TestCase):
         self.assertIn('Form had errors', out.data)
         self.assertIn('A location needs a human readable name.',
                       out.data)
+
+    def test_setting_location_successfully(self):
+        out = self.app.post('/settings', data={
+            'rpi_sample_time': 12,
+            'rpi_control_panel_host': '0.0.0.0',
+            'rpi_control_panel_port': 50,
+            'rpi_sds011': '/dev/foo',
+            'rpi_location': '50.0, 3.0, 0, Somewhere else',
+        })
+        self.assertIn('Settings saved.', out.data)
+
+        loc = self.iface.device_info['location']
+        self.assertEqual(50, loc['latitude'])
+        self.assertEqual(3, loc['longitude'])
+        self.assertEqual(0, loc['altitude'])
+        self.assertEqual('Somewhere else', loc['name'])
+
+    def test_adding_location_when_offline(self):
+        # Make set_settings raise
+        self.iface.fails = True
+        data = {
+            'rpi_sample_time': 12,
+            'rpi_control_panel_host': '0.0.0.0',
+            'rpi_control_panel_port': 50,
+            'rpi_sds011': '/dev/foo',
+            'rpi_location': '5, 60, 0, Bergen E Fin',
+        }
+        out = self.app.post('/settings', data=data)
+        self.assertIn('Settings saved.', out.data)
+        self.assertIn('Setting the location failed: Was asked to fail.',
+                      out.data)
+
+    def test_do_not_recreate_locations(self):
+        loc = self.iface.device_info['location']
+        data = {
+            'rpi_sample_time': 12,
+            'rpi_control_panel_host': '0.0.0.0',
+            'rpi_control_panel_port': 50,
+            'rpi_sds011': '/dev/foo',
+            'rpi_location': '%f, %f, %f, %s' % (
+                loc['latitude'], loc['longitude'], loc['altitude'],
+                'some new name',
+            ),
+        }
+        self.app.post('/settings', data=data)
+
+        # Name should not have changed. This is a bad way to assert this,
+        # but fine for now.
+        self.assertEqual('Bergen By E Nydeli',
+                         self.iface.device_info['location']['name'])
 
 
 if __name__ == '__main__':
