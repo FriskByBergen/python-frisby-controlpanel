@@ -39,6 +39,7 @@ class LocationField(Field):
             label, [InputRequired(), validate_lat_lon_alt_name], **kwargs
         )
         self.data = None
+        self.location = None
 
     def _value(self):
         if self.data:
@@ -59,8 +60,26 @@ class LocationField(Field):
     def process_formdata(self, valuelist):
         if valuelist:
             self.data = tuple(map(unicode.strip, valuelist[0].split(',')))
+
+            t = self.data
+            self.location = (float(t[0]), float(t[1]), float(t[2]), t[3])
         else:
             self.data = (0.0, 0.0, 0.0, "")
+
+    def get_latitude(self):
+        return self.location[0]
+
+    def get_longitude(self):
+        return self.location[1]
+
+    def get_altitude(self):
+        return self.location[2]
+
+    def get_name(self):
+        return self.location[3]
+
+    def get_location(self):
+        return self.location
 
 
 class SettingsForm(FlaskForm):
