@@ -169,7 +169,13 @@ class FriskbyInterface():
 
     def get_device_id_and_api_key(self, config_file):
         # Returns a tuple consisting of device ID and API key.
-        config = DeviceConfig(config_file)
+        config = None
+
+        try:
+            config = DeviceConfig(config_file)
+        except IOError:
+            return (None, None)
+
         device_id = config.getDeviceID()
         post_key = config.getPostKey()
         if device_id == "" or device_id is None:

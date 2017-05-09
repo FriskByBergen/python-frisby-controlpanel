@@ -59,10 +59,7 @@ def inject_device_id():
     """Injects the device_id into the template context, or None if none."""
     filename = app.config['FRISKBY_DEVICE_CONFIG_PATH']
     iface = app.config['FRISKBY_INTERFACE']
-    try:
-        (device_id, _) = iface.get_device_id_and_api_key(filename)
-    except IOError:
-        device_id = None
+    (device_id, _) = iface.get_device_id_and_api_key(filename)
     return dict(device_id=device_id)
 
 
@@ -99,10 +96,7 @@ def dashboard():
     fby_iface = app.config['FRISKBY_INTERFACE']
     config_path = app.config['FRISKBY_DEVICE_CONFIG_PATH']
 
-    try:
-        (device_id, _) = fby_iface.get_device_id_and_api_key(config_path)
-    except IOError:
-        device_id = None
+    (device_id, _) = fby_iface.get_device_id_and_api_key(config_path)
 
     # No device, so redirect to the register page.
     if not device_id:
@@ -126,10 +120,7 @@ def register():
     config_path = app.config['FRISKBY_DEVICE_CONFIG_PATH']
     error = None
 
-    try:
-        (device_id, _) = fby_iface.get_device_id_and_api_key(config_path)
-    except IOError:
-        device_id = None
+    (device_id, _) = fby_iface.get_device_id_and_api_key(config_path)
 
     if request.method == 'POST' and device_id:
         return redirect(url_for('dashboard'))
@@ -218,12 +209,7 @@ def settings():
     """Displays and allows changing of settings."""
     iface = app.config['FRISKBY_INTERFACE']
     config_path = app.config['FRISKBY_DEVICE_CONFIG_PATH']
-    device_id = None
-    api_key = None
-    try:
-        (device_id, api_key) = iface.get_device_id_and_api_key(config_path)
-    except IOError:
-        pass
+    (device_id, api_key) = iface.get_device_id_and_api_key(config_path)
 
     # No device, so redirect to the register page.
     if not device_id:
