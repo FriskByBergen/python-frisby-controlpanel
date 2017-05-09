@@ -137,6 +137,7 @@ class SettingsTestCase(unittest.TestCase):
                       out.data)
 
     def test_do_not_recreate_locations(self):
+        self.iface.settings = dict(rpi_sample_time=2)
         loc = self.iface.device_info['location']
         data = {
             'rpi_sample_time': 12,
@@ -154,6 +155,9 @@ class SettingsTestCase(unittest.TestCase):
         # but fine for now.
         self.assertEqual('Bergen By E Nydeli',
                          self.iface.device_info['location']['name'])
+
+        # Other changed settings should change.
+        self.assertEqual(12, self.iface.settings['rpi_sample_time'])
 
     def test_no_settings_without_device_id(self):
         self.iface.device_id = None
