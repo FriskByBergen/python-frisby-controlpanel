@@ -51,7 +51,7 @@ class LocationField(Field):
             except ValueError:
                 return u''
             # Note the loss of precision here. The default precision for %f is
-            # 6, but that is enough precision (110cm).
+            # 6, but that is enough precision (11cm).
             return u'%f, %f, %f, %s' % (float(lat), float(lon), float(alt),
                                         name)
         else:
