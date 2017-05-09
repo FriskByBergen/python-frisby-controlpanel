@@ -155,6 +155,11 @@ class SettingsTestCase(unittest.TestCase):
         self.assertEqual('Bergen By E Nydeli',
                          self.iface.device_info['location']['name'])
 
+    def test_no_settings_without_device_id(self):
+        self.iface.device_id = None
+        out = self.app.get('/', follow_redirects=True)
+        self.assertIn('Not registered', out.data)
+
 
 if __name__ == '__main__':
     unittest.main()
