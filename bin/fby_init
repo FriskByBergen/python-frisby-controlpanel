@@ -40,6 +40,10 @@ preconfigured on the server, and that you have typed the id correctly.
 """ % (device_id, device_id)
     sys.exit( msg )
 
+def salt_config_error():
+    sys.exit( """Can't open /etc/salt/minion for writing. Make sure 
+salt-minion is installed and this tool is running with sufficient 
+privileges to change this file.""")
 
 def stop_device( ):
     fbi = FriskbyInterface( )
@@ -66,7 +70,15 @@ def download_config(device_id):
     print("Saving device configuration to:%s" % config_path )
     config.save( filename = config_path )
 
-    
+def write_salt_config(device_id):
+    finger = "79:74:ee:b0:e1:98:2e:28:a3:8c:85:f7:05:04:6e:64:75:bc:c0:d3:80:3b:54:51:66:f7:78:61:3d:d0:1c:c9"
+    try:
+        with open('/etc/salt/minon', 'w') as config:
+            config.write("master: salt.friskby.no\n")
+            config.write("master_finger: %s\n" % finger)
+            config.write("id: %s\n" % device_id)
+    except IOError e:
+        salt_config_error()
 
 if __name__ == "__main__":
     if len(sys.argv) < 2:
@@ -76,5 +88,6 @@ if __name__ == "__main__":
 
     stop_device( )
     download_config( dev_id )
+    write_salt_config( dev_id )
     start_device( )
 
