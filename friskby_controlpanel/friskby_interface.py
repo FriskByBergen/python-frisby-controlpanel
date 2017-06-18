@@ -82,6 +82,7 @@ class FriskbyInterface():
         'sampler': 'friskby-sampler.service',
         'submitter': 'friskby-submitter.service',
         'friskby_controlpanel': 'friskby-controlpanel.service',
+        'salt-minion': 'salt-minion.service',
     }
 
     def __init__(self):
